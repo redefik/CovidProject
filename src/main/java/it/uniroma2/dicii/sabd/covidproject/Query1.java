@@ -7,11 +7,16 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
+
+/*
+* Dataset: https://github.com/pcm-dpc/COVID-19/blob/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+* Query:  For each week determine the average number of cured people and the average number of swab tests.
+* */
+
 
 public class Query1 {
 
@@ -37,7 +42,10 @@ public class Query1 {
         return italianDailyStats;
     }
 
+    /* To convert from cumulative statistics to absolute statitics, grouping consecutive rows is needed.
+       Two rows are grouped when they share the same key */
     private static Iterator<Tuple2<Integer, ItalianWeeklyStats>>  duplicateWeeklyStats(ItalianDailyStats italianDailyStats) {
+
         List<Tuple2<Integer, ItalianWeeklyStats>> pairs = new ArrayList<>();
         Integer weekIndex = italianDailyStats.getWeekOfYear();
         Integer cumulativeCured = italianDailyStats.getCumulativeCured();
@@ -47,7 +55,9 @@ public class Query1 {
         return pairs.iterator();
     }
 
+    // Rows sharing the same key, aggregated by groupByKey, are combined to compute the absolute statistics
     private static ItalianWeeklyStats computeAbsoluteStats(Iterable<ItalianWeeklyStats> values) {
+
         ItalianWeeklyStats absoluteWeeklyStats = new ItalianWeeklyStats();
         List<ItalianWeeklyStats> valuesList = new ArrayList<>();
         for (ItalianWeeklyStats value : values) {
@@ -93,19 +103,18 @@ public class Query1 {
         JavaPairRDD<Integer, ItalianWeeklyStats> cachedWeeklyAbsoluteStats = duplicatedWeeklyStats.groupByKey()
                 .mapValues(Query1::computeAbsoluteStats)
                 .sortByKey(false)
-                .cache();
+                .cache(); // caching for better reuse among multiple actions
+        // Remove a spurious element resulting from the previous conversion
         Tuple2<Integer, ItalianWeeklyStats> spuriousTuple = cachedWeeklyAbsoluteStats.first();
         JavaPairRDD<Integer, ItalianWeeklyStats> weeklyAbsoluteStats = cachedWeeklyAbsoluteStats.filter(t -> !t._1.equals(spuriousTuple._1));
 
-        // TODO debug print
+        // TODO debug print EXPORT...
         Map<Integer, ItalianWeeklyStats> map = weeklyAbsoluteStats.collectAsMap();
         for (Integer w : map.keySet()) {
             System.out.println("week: " + w + " cured: " + map.get(w).getCured() + " swabs: " + map.get(w).getSwabs());
         }
 
         sc.stop();
-
-
     }
 
 }
