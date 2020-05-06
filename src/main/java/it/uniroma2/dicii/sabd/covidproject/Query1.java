@@ -79,12 +79,10 @@ public class Query1 {
         return absoluteWeeklyStats;
     }
 
-
-
     public static void main(String[] args) {
 
-        if (args.length != 1) {
-            System.err.println("Input file required");
+        if (args.length != 2) {
+            System.err.println("Input file and output directory required");
             System.exit(1);
         }
 
@@ -107,12 +105,14 @@ public class Query1 {
         // Remove a spurious element resulting from the previous conversion
         Tuple2<Integer, ItalianWeeklyStats> spuriousTuple = cachedWeeklyAbsoluteStats.first();
         JavaPairRDD<Integer, ItalianWeeklyStats> weeklyAbsoluteStats = cachedWeeklyAbsoluteStats.filter(t -> !t._1.equals(spuriousTuple._1));
+        JavaRDD<String> csvOutput = weeklyAbsoluteStats.map(was -> "" + was._1 + "," + was._2.getCured() + "," + was._2.getSwabs());
+        csvOutput.saveAsTextFile(args[1]);
 
-        // TODO debug print EXPORT...
+        /*// TODO debug print EXPORT...
         Map<Integer, ItalianWeeklyStats> map = weeklyAbsoluteStats.collectAsMap();
         for (Integer w : map.keySet()) {
             System.out.println("week: " + w + " cured: " + map.get(w).getCured() + " swabs: " + map.get(w).getSwabs());
-        }
+        }*/
 
         sc.stop();
     }
