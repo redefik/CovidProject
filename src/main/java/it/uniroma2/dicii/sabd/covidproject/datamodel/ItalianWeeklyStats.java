@@ -1,4 +1,4 @@
-package it.uniroma2.dicii.sabd.covidproject.model;
+package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 package it.uniroma2.dicii.sabd.covidproject;
 
-import it.uniroma2.dicii.sabd.covidproject.model.ItalianDailyStats;
-import it.uniroma2.dicii.sabd.covidproject.model.ItalianWeeklyStats;
+import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianDailyStats;
+import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianWeeklyStats;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;

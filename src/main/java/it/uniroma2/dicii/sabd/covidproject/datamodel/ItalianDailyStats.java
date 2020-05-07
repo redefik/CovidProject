@@ -1,10 +1,8 @@
-package it.uniroma2.dicii.sabd.covidproject.model;
+package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
 /*
 * This object represents the daily cumulative statistics of interest related to Covid-19 outbreak in Italy
 * */
-
-import java.io.Serializable;
 
 public class ItalianDailyStats {
 

@@ -3,10 +3,12 @@ package it.uniroma2.dicii.sabd.covidproject.utils;
 
 import java.awt.*;
 
+// TODO BROADCAST VARIABLE ??
+/* Utility class used to establish the continent to which a (latitude,longitude) pair belongs*/
 public class UtilsContinent
 {
 
-    public enum Continent {
+    public enum Continent{
 
         AFRICA, AMERICA, ANTARCTICA, ASIA, EUROPE, OCEANIA, NA
 
@@ -127,7 +129,7 @@ public class UtilsContinent
 
     }
 
-    public Continent getContinentFromLatLong(float latitude, float longitude) {
+    public Continent getContinentFromLatLong(double latitude, double longitude) {
         Point point = new Point((int)longitude, (int)latitude);
         if (africa.contains(point)) {
             return Continent.AFRICA;
