@@ -51,15 +51,15 @@ public class Query3 {
 
     public static void main(String[] args) {
 
-//        if (args.length != 1) {
-//            System.err.println(""); //TODO
-//            System.exit(1);
-//        }
+        if (args.length != 2) {
+            System.err.println("Input file and output directory required");
+            System.exit(1);
+        }
 
         SparkConf conf = new SparkConf().setAppName("Query-3").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<String> inputRDD = sc.textFile("src/main/resources/data2.csv"); // import input file
+        JavaRDD<String> inputRDD = sc.textFile(args[0]); // import input file
         // TODO header removal...
         // TODO ho rimosso record strani...
         JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province") && !line.contains("\""));
@@ -81,9 +81,8 @@ public class Query3 {
             JavaPairRDD<Double, String> top50MonthlyAffectedRegionRDD =
                     sc.parallelizePairs(top50MonthlyAffectedRegion).cache();
 
-            //top50MonthlyAffectedRegionRDD.saveAsTextFile("src/main/resources/output/month" + monthIndex);
-
-            top50MonthlyAffectedRegionRDD.foreach(x -> {System.out.println(x._2.toString() + " trend:"+ x._1.toString()  );});
+            // TODO DEBUG SAVE
+            top50MonthlyAffectedRegionRDD.saveAsTextFile(args[1] + "/month" + monthIndex);
         }
 
         sc.stop();
