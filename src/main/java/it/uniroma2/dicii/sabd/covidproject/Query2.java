@@ -23,8 +23,10 @@ import java.util.*;
 
 public class Query2 {
 
+    //TODO COMMON TO QUERY3
+
     // Estimating trendline coefficient
-    private static Double computeCoefficientEstimate(Double[] confirmedDailyIncrements) {
+    public static Double computeCoefficientEstimate(Double[] confirmedDailyIncrements) {
 
         Double avgIncrements;
         Double incrementsSum = 0D;
