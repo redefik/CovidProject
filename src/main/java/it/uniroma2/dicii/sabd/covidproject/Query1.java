@@ -1,5 +1,19 @@
 package it.uniroma2.dicii.sabd.covidproject;
 
+/*
+ * This query is based on a dataset on Covid-19 provided by the Italian Civil Protection Department.
+ * The dataset is in CSV format and contains one row per day, starting from February 23, 2020.
+ * Each row provides many information such as: date, patients in hospitals with symptoms, total number
+ * of current confirmed cases, daily new confirmed cases, number of swab tests... Most data are cumulative.
+ * For further details, see the dataset available at:
+ * https://github.com/pcm-dpc/COVID-19/blob/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
+ *
+ * The aim of the query is to determine for each week the average number of cured people in a day and
+ * the average number of swab tests in a day.
+ *
+ * The query is answered using Apache Spark.
+ * */
+
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianDailyStats;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianWeeklyStats;
 import org.apache.spark.SparkConf;
@@ -12,27 +26,23 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
 
-/*
-* Dataset: https://github.com/pcm-dpc/COVID-19/blob/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv
-* Query:  For each week determine the average number of cured people and the average number of swab tests.
-* */
-
-
 public class Query1 {
 
     private final static String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
+    /* Parse a line of the CSV dataset */
     private static ItalianDailyStats parseInputLine(String line) {
 
-        // Extract fields of interest from CSV line
+        /* Extract fields of interest from the CSV line */
+        // TODO possibly modify in case of feature extraction at ingestion-time
         String[] csvFields = line.split(",");
         String date = csvFields[0];
         Integer cumulativeCured = Integer.parseInt(csvFields[9]);
         Integer cumulativeSwabs = Integer.parseInt(csvFields[12]);
-        // Parsing date field
+        /* Parsing date field */
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         LocalDate formattedDate = LocalDate.parse(date, formatter);
-        // Build ItalianDailyStats object
+        /* Build ItalianDailyStats object */
         ItalianDailyStats italianDailyStats = new ItalianDailyStats();
         italianDailyStats.setCumulativeCured(cumulativeCured);
         italianDailyStats.setCumulativeSwabs(cumulativeSwabs);
@@ -42,8 +52,9 @@ public class Query1 {
         return italianDailyStats;
     }
 
-    /* To convert from cumulative statistics to absolute statitics, grouping consecutive rows is needed.
-       Two rows are grouped when they share the same key */
+
+    /* Utility method that performs the first phase of absolute statistics computation from cumulative measurements
+    *  (see main() below) */
     private static Iterator<Tuple2<Integer, ItalianWeeklyStats>>  duplicateWeeklyStats(ItalianDailyStats italianDailyStats) {
 
         List<Tuple2<Integer, ItalianWeeklyStats>> pairs = new ArrayList<>();
@@ -55,7 +66,8 @@ public class Query1 {
         return pairs.iterator();
     }
 
-    // Rows sharing the same key, aggregated by groupByKey, are combined to compute the absolute statistics
+    /* Utility method that performs the second phase of absolute statistics computation from cumulative measurements
+    *  (see main() below)*/
     private static ItalianWeeklyStats computeAbsoluteStats(Iterable<ItalianWeeklyStats> values) {
 
         ItalianWeeklyStats absoluteWeeklyStats = new ItalianWeeklyStats();
@@ -85,35 +97,40 @@ public class Query1 {
             System.err.println("Input file and output directory required");
             System.exit(1);
         }
-
+        /* Spark setup */
         SparkConf conf = new SparkConf().setAppName("Query-1");
         JavaSparkContext sc = new JavaSparkContext(conf);
-
-        JavaRDD<String> rddInput = sc.textFile(args[0]); // import input file
-        JavaRDD<String> rddInputWithoutHeader = rddInput.filter(line -> !line.contains("data"));  // TODO ? remove header in data ingestion ?
+        /* Import input CSV file */
+        JavaRDD<String> rddInput = sc.textFile(args[0]);
+        // TODO possibly modify in case of header extraction at ingestion-time
+        JavaRDD<String> rddInputWithoutHeader = rddInput.filter(line -> !line.contains("data"));
+        /* Parse input CSV file */
         JavaRDD<ItalianDailyStats> italianDailyStats = rddInputWithoutHeader.map(Query1::parseInputLine);
-        // TODO coalesce in filtering ?
+        // TODO coalesce in filtering to improve performance ?
+        /* Since the statistics are computed on a weekly basis, only the measurements made at the end of the weeks are preserved */
         JavaRDD<ItalianDailyStats> italianWeeklyStats = italianDailyStats.filter(ids -> ids.getDayOfWeek() == 7);
-        /* To obtain the absolute statistics the tuple are duplicated in the following way:
-         Given an object with index of week x and stats y the tuples (x,y) and (x+1,y) are emitted */
-        JavaPairRDD<Integer, ItalianWeeklyStats> duplicatedWeeklyStats = italianWeeklyStats.flatMapToPair(Query1::duplicateWeeklyStats);
-        // Convert cumulative statistics to absolute statistics by subtraction
-        JavaPairRDD<Integer, ItalianWeeklyStats> cachedWeeklyAbsoluteStats = duplicatedWeeklyStats.groupByKey()
+        /* Available data are cumulative but the required statistics are absolute. Then statistics computation is
+        *  articulated in two phases:
+        *  1. From each ItalianDailyStats object two <Integer,ItalianWeeklyStats> pairs are created.
+        *  Both values of pairs encapsulate the cumulative number of cured people and swabs tests
+        *  referring to a week, say i, associated to the ItalianDailyStats objects. Instead, the first pair has key i and
+        *  the second one key i+1.
+        *  2. In this way, the average daily increments can be computed grouping pairs with the
+        *  same key and dividing by 7 the absolute value of the difference of the cumulative values */
+        JavaPairRDD<Integer, ItalianWeeklyStats> duplicatedWeeklyStats = italianWeeklyStats
+                .flatMapToPair(Query1::duplicateWeeklyStats);
+        JavaPairRDD<Integer, ItalianWeeklyStats> cachedWeeklyAbsoluteStats = duplicatedWeeklyStats
+                .groupByKey()
                 .mapValues(Query1::computeAbsoluteStats)
                 .sortByKey(false)
                 .cache(); // caching for better reuse among multiple actions
-        // Remove a spurious element resulting from the previous conversion
+        /* The previous conversion produces a spurious element, that here is removed */
         Tuple2<Integer, ItalianWeeklyStats> spuriousTuple = cachedWeeklyAbsoluteStats.first();
         JavaPairRDD<Integer, ItalianWeeklyStats> weeklyAbsoluteStats = cachedWeeklyAbsoluteStats.filter(t -> !t._1.equals(spuriousTuple._1));
         JavaRDD<String> csvOutput = weeklyAbsoluteStats.map(was -> "" + was._1 + "," + was._2.getCured() + "," + was._2.getSwabs());
+        /* Save results as a CSV file in the output directory provided by the user */
         csvOutput.saveAsTextFile(args[1]);
-
-        /*// TODO debug print EXPORT...
-        Map<Integer, ItalianWeeklyStats> map = weeklyAbsoluteStats.collectAsMap();
-        for (Integer w : map.keySet()) {
-            System.out.println("week: " + w + " cured: " + map.get(w).getCured() + " swabs: " + map.get(w).getSwabs());
-        }*/
-
+        /* Spark shutdown */
         sc.stop();
     }
 

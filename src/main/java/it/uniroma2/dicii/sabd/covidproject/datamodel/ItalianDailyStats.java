@@ -1,15 +1,16 @@
 package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
 /*
-* This object represents the daily cumulative statistics of interest related to Covid-19 outbreak in Italy
+* This class encapsulates the measurement of interests extracted from a line of the CSV input file used in the
+* first query.
 * */
 
 public class ItalianDailyStats {
 
     private Integer dayOfWeek;
     private Integer weekOfYear;
-    private Integer cumulativeCured;
-    private Integer cumulativeSwabs;
+    private Integer cumulativeCured; /* Number of currently cured people */
+    private Integer cumulativeSwabs; /* Number of currently swab tests */
 
     public void setDayOfWeek(Integer dayOfWeek) {
         this.dayOfWeek = dayOfWeek;

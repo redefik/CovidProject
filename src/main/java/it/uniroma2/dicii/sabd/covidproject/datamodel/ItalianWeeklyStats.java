@@ -1,5 +1,10 @@
 package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
+/*
+ * This class encapsulates the number of cured people and swabs test registered in a week in Italy,
+ * either cumulative or absolute
+ * */
+
 import java.io.Serializable;
 
 public class ItalianWeeklyStats implements Serializable {
