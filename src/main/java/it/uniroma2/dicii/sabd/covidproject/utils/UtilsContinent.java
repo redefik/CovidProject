@@ -1,10 +1,13 @@
 package it.uniroma2.dicii.sabd.covidproject.utils;
 
+// TODO CONSIDER THE IDEA TO MAKE IT A BROADCAST VARIABLE
+/*
+ * This utility class provides a method to identify a continent by a <latitude, longitude> pair.
+ * The check is made using Polygon Java class.
+ * */
 
 import java.awt.*;
 
-// TODO BROADCAST VARIABLE ??
-/* Utility class used to establish the continent to which a (latitude,longitude) pair belongs*/
 public class UtilsContinent
 {
 
@@ -14,7 +17,7 @@ public class UtilsContinent
 
     }
 
-    // List of polygons. Each of them represents a continent in term of latitude and longitude
+    /* Each polygon represents a continent or a fraction of it */
     Polygon northAmerica;
     Polygon southAmerica;
     Polygon africa;

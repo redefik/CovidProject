@@ -1,18 +1,19 @@
 package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
 /*
-* This object represents Region data related to Covid-19 outbreak.
-* */
+ * This class encapsulates the measurement of interests extracted from a line of the CSV input file used in the
+ * second query.
+ * */
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 public class RegionData implements Serializable {
 
-    private String name;
+    private String name;                       /* country/province name */
     private Double latitude;
     private Double longitude;
-    private Double[] confirmedDailyIncrements;
+    private Double[] confirmedDailyIncrements; /* daily increments of confirmed cases of Covid */
 
     public RegionData(String name, Double latitude, Double longitude, Double[] confirmedDailyIncrements) {
         this.name = name;
@@ -20,8 +21,6 @@ public class RegionData implements Serializable {
         this.longitude = longitude;
         this.confirmedDailyIncrements = confirmedDailyIncrements;
     }
-
-
 
     public String getName() {
         return name;
