@@ -2,6 +2,7 @@ package it.uniroma2.dicii.sabd.covidproject;
 
 import it.uniroma2.dicii.sabd.covidproject.datamodel.MonthlyRegionData;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.TrendCoefficientRegion;
+import it.uniroma2.dicii.sabd.covidproject.utils.GlobalDataUtils;
 import it.uniroma2.dicii.sabd.covidproject.utils.TrendLineMonthlyRegionComparator;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -28,17 +29,8 @@ public class Query3 {
         // Only completed months are considered and the first day is not considered since the increment is not
         // computable. The months duration is assumed to be 30 days for sake of simplicity
         int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 30));
-        Double[] dailyCumulativeConfirmed = new Double[availableDays + 1];
-        for (int i = 0; i < dailyCumulativeConfirmed.length; i++) {
-            dailyCumulativeConfirmed[i] = Double.parseDouble(csvFields[i+4]);
-        }
-        // Convert cumulative confirmed to confirmed daily increments
-        Double[] confirmedDailyIncrements = new Double[availableDays];
-
-        for (int i = 0; i < availableDays; i++) {
-            confirmedDailyIncrements[i] = dailyCumulativeConfirmed[i+1]-dailyCumulativeConfirmed[i];
-        }
-
+        /* Convert cumulative data to daily increments of confirmed cases */
+        Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
         int numberOfMonths = confirmedDailyIncrements.length / 30;
 
         // Build MonthlRegionData object
@@ -48,7 +40,7 @@ public class Query3 {
             System.arraycopy(confirmedDailyIncrements, i * 30, monthlyIncrements, 0, 30);
             MonthlyRegionData monthlyRegionData = new MonthlyRegionData();
             monthlyRegionData.setName(regionName);
-            monthlyRegionData.setTrendLineCoefficient(Query2.computeCoefficientEstimate(monthlyIncrements));
+            monthlyRegionData.setTrendLineCoefficient(GlobalDataUtils.computeCoefficientEstimate(monthlyIncrements));
             output.add(new Tuple2<>(i, monthlyRegionData));
         }
 
@@ -114,6 +106,7 @@ public class Query3 {
                     sc.parallelizePairs(top50MonthlyAffectedRegion).cache();
 
             if (mode.equals("naive")) {
+                System.out.println("To be implemented");
                 // TODO invoke naive implementation of k-means
             } else {
                 kMeansMLib(sc, top50MonthlyAffectedRegionRDD, args[1] + "/month" + monthIndex);

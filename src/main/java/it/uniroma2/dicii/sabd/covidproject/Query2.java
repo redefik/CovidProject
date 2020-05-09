@@ -17,6 +17,7 @@ package it.uniroma2.dicii.sabd.covidproject;
 
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ContinentWeeklyStats;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.RegionData;
+import it.uniroma2.dicii.sabd.covidproject.utils.GlobalDataUtils;
 import it.uniroma2.dicii.sabd.covidproject.utils.KeyContinentWeekComparator;
 import it.uniroma2.dicii.sabd.covidproject.utils.UtilsContinent;
 import org.apache.commons.math3.stat.StatUtils;
@@ -30,30 +31,6 @@ import java.util.*;
 
 public class Query2 {
 
-    // TODO MOVE FUNCTION SINCE IT IS SHARED BY QUERY3
-    /* Estimate the trend line coefficient used to identify the mostly affected regions.
-    *  The estimate is computed considering the slope of the regression line against the confirmed daily increments
-    *  of a region.
-    * */
-    public static Double computeCoefficientEstimate(Double[] confirmedDailyIncrements) {
-
-        Double avgIncrements;
-        Double incrementsSum = 0D;
-        int n = confirmedDailyIncrements.length;
-        for (Double confirmedDailyIncrement : confirmedDailyIncrements) {
-            incrementsSum += confirmedDailyIncrement;
-        }
-        avgIncrements = incrementsSum / n;
-        double num = 0F;
-        double den = 0F;
-        for (int i = 1; i <= n; i++) {
-            num += (i-(double)(n+1)/2)*(confirmedDailyIncrements[i-1]-avgIncrements);
-            den += (i-(double)(n+1)/2)*(i-(double)(n+1)/2);
-        }
-        return num / den;
-
-    }
-
     /* Parse a line of the CSV dataset */
     private static Tuple2<Double, RegionData> parseInputLine(String line) {
 
@@ -66,22 +43,13 @@ public class Query2 {
         /* Retrieve number of days available for computations of daily increments of confirmed cases.
         *  The first day in the dataset is not considered because the corresponding increment cannot be computed.
         *  Furthermore, only completed week are considered */
-        // TODO Remove duplicated code between Query2 and Query3
         int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 7));
-        Double[] dailyCumulativeConfirmed = new Double[availableDays + 1];
-        for (int i = 0; i < dailyCumulativeConfirmed.length; i++) {
-            dailyCumulativeConfirmed[i] = Double.parseDouble(csvFields[i+4]);
-        }
-        /* Convert cumulative confirmed to confirmed daily increments */
-        Double[] confirmedDailyIncrements = new Double[availableDays];
-
-        for (int i = 0; i < availableDays; i++) {
-            confirmedDailyIncrements[i] = dailyCumulativeConfirmed[i+1]-dailyCumulativeConfirmed[i];
-        }
+        /* Convert cumulative data to daily increments */
+        Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
         /* Build RegionData object, representing the parsed line */
         RegionData regionData =  new RegionData(regionName, latitude, longitude, confirmedDailyIncrements);
         /* Estimate Trend Line Coefficient associated to the world region */
-        Double tlcEstimate = computeCoefficientEstimate(confirmedDailyIncrements);
+        Double tlcEstimate = GlobalDataUtils.computeCoefficientEstimate(confirmedDailyIncrements);
         return new Tuple2<>(tlcEstimate, regionData);
     }
 
