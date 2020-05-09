@@ -117,18 +117,19 @@ public class Query1 {
         *  the second one key i+1.
         *  2. In this way, the average daily increments can be computed grouping pairs with the
         *  same key and dividing by 7 the absolute value of the difference of the cumulative values */
-        JavaPairRDD<Integer, ItalianWeeklyStats> duplicatedWeeklyStats = italianWeeklyStats
-                .flatMapToPair(Query1::duplicateWeeklyStats);
-        JavaPairRDD<Integer, ItalianWeeklyStats> cachedWeeklyAbsoluteStats = duplicatedWeeklyStats
+        JavaPairRDD<Integer, ItalianWeeklyStats> weeklyAbsoluteStats = italianWeeklyStats
+                .flatMapToPair(Query1::duplicateWeeklyStats)
                 .groupByKey()
                 .mapValues(Query1::computeAbsoluteStats)
-                .sortByKey(false)
-                .cache(); // caching for better reuse among multiple actions
+                .sortByKey()
+                .cache();
         /* The previous conversion produces a spurious element, that here is removed */
-        Tuple2<Integer, ItalianWeeklyStats> spuriousTuple = cachedWeeklyAbsoluteStats.first();
-        JavaPairRDD<Integer, ItalianWeeklyStats> weeklyAbsoluteStats = cachedWeeklyAbsoluteStats.filter(t -> !t._1.equals(spuriousTuple._1));
-        JavaRDD<String> csvOutput = weeklyAbsoluteStats.map(was -> "" + was._1 + "," + was._2.getCured() + "," + was._2.getSwabs());
+        long numOfWeeks = weeklyAbsoluteStats.count();
+        JavaPairRDD<Tuple2<Integer, ItalianWeeklyStats>, Long> weeklyAbsoluteStatsCleaned = weeklyAbsoluteStats
+                .zipWithIndex()
+                .filter(x -> x._2 != numOfWeeks - 1);
         /* Save results as a CSV file in the output directory provided by the user */
+        JavaRDD<String> csvOutput = weeklyAbsoluteStatsCleaned.map(was -> "" + was._1._1 + "," + was._1._2.getCured() + "," + was._1._2.getSwabs());
         csvOutput.saveAsTextFile(args[1]);
         /* Spark shutdown */
         sc.stop();
