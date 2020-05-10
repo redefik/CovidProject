@@ -1,5 +1,7 @@
 package it.uniroma2.dicii.sabd.covidproject;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.MonthlyRegionData;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.TrendCoefficientRegion;
 import it.uniroma2.dicii.sabd.covidproject.utils.GlobalDataUtils;
@@ -16,35 +18,45 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 
 public class Query3 {
 
     private static Iterator<Tuple2<Integer, MonthlyRegionData>> parseInputLine (String line){
 
-        // Extract fields of interest from CSV line
-        String[] csvFields = line.split(",");
-        String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
-        // Retrieve num of days available for daily increments computations
-        // Only completed months are considered and the first day is not considered since the increment is not
-        // computable. The months duration is assumed to be 30 days for sake of simplicity
-        int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 30));
-        /* Convert cumulative data to daily increments of confirmed cases */
-        Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
-        int numberOfMonths = confirmedDailyIncrements.length / 30;
+        try {
+            // Extract fields of interest from CSV line
+            CSVReader csvReader = new CSVReader(new StringReader(line));
+            String[] csvFields = csvReader.readNext();
+            csvReader.close();
+            String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
+            // Retrieve num of days available for daily increments computations
+            // Only completed months are considered and the first day is not considered since the increment is not
+            // computable. The months duration is assumed to be 30 days for sake of simplicity
+            int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 30));
+            /* Convert cumulative data to daily increments of confirmed cases */
+            Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
+            int numberOfMonths = confirmedDailyIncrements.length / 30;
 
-        // Build MonthlRegionData object
-        List<Tuple2<Integer, MonthlyRegionData>> output = new ArrayList<>();
-        for (int i = 0; i < numberOfMonths; i++){
-            Double[] monthlyIncrements = new Double[30];
-            System.arraycopy(confirmedDailyIncrements, i * 30, monthlyIncrements, 0, 30);
-            MonthlyRegionData monthlyRegionData = new MonthlyRegionData();
-            monthlyRegionData.setName(regionName);
-            monthlyRegionData.setTrendLineCoefficient(GlobalDataUtils.computeCoefficientEstimate(monthlyIncrements));
-            output.add(new Tuple2<>(i, monthlyRegionData));
+            // Build MonthlyRegionData object
+            List<Tuple2<Integer, MonthlyRegionData>> output = new ArrayList<>();
+            for (int i = 0; i < numberOfMonths; i++) {
+                Double[] monthlyIncrements = new Double[30];
+                System.arraycopy(confirmedDailyIncrements, i * 30, monthlyIncrements, 0, 30);
+                MonthlyRegionData monthlyRegionData = new MonthlyRegionData();
+                monthlyRegionData.setName(regionName);
+                monthlyRegionData.setTrendLineCoefficient(GlobalDataUtils.computeCoefficientEstimate(monthlyIncrements));
+                output.add(new Tuple2<>(i, monthlyRegionData));
+            }
+
+            return output.iterator();
+        } catch (CsvValidationException | IOException e) {
+            List<Tuple2<Integer, MonthlyRegionData>> failedOutput = new ArrayList<>();
+            failedOutput.add(new Tuple2<>(null, null));
+            return failedOutput.iterator();
         }
-
-        return output.iterator();
     }
 
     private static void kMeansMLib(JavaSparkContext sc, JavaPairRDD<Double,String> trendRegionPairs, String outputDirectory) {
@@ -84,11 +96,12 @@ public class Query3 {
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         JavaRDD<String> inputRDD = sc.textFile(args[0]); // import input file
-        // TODO header removal...
-        // TODO ho rimosso record strani...
-        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province") && !line.contains("\""));
-        JavaPairRDD<Integer, MonthlyRegionData> monthlyRegionsData =
-                rddInputWithoutHeader.flatMapToPair(Query3::parseInputLine).cache();
+        // TODO possibly modify in case of header handling at ingestion-time
+        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province"));
+        JavaPairRDD<Integer, MonthlyRegionData> monthlyRegionsData = rddInputWithoutHeader
+                .flatMapToPair(Query3::parseInputLine)
+                .filter(x -> x._1 != null)
+                .cache();
 
         long numberOfMonths = monthlyRegionsData.groupByKey().count();
 

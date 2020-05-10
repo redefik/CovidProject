@@ -15,6 +15,8 @@ package it.uniroma2.dicii.sabd.covidproject;
  * The query is answered using Apache Spark.
  */
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ContinentWeeklyStats;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.RegionData;
 import it.uniroma2.dicii.sabd.covidproject.utils.GlobalDataUtils;
@@ -27,6 +29,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 
 public class Query2 {
@@ -34,24 +39,32 @@ public class Query2 {
     /* Parse a line of the CSV dataset */
     private static Tuple2<Double, RegionData> parseInputLine(String line) {
 
-        /* Extract fields of interest from CSV line */
-        String[] csvFields = line.split(",");
-        /* If province/state is not available, the country is considered */
-        String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
-        Double latitude = Double.parseDouble(csvFields[2]);
-        Double longitude = Double.parseDouble(csvFields[3]);
-        /* Retrieve number of days available for computations of daily increments of confirmed cases.
-        *  The first day in the dataset is not considered because the corresponding increment cannot be computed.
-        *  Furthermore, only completed week are considered */
-        int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 7));
-        /* Convert cumulative data to daily increments */
-        Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
-        /* Build RegionData object, representing the parsed line */
-        RegionData regionData =  new RegionData(regionName, latitude, longitude, confirmedDailyIncrements);
-        /* Estimate Trend Line Coefficient associated to the world region */
-        Double tlcEstimate = GlobalDataUtils.computeCoefficientEstimate(confirmedDailyIncrements);
-        return new Tuple2<>(tlcEstimate, regionData);
+        try {
+            /* Extract fields of interest from CSV line */
+            CSVReader csvReader = new CSVReader(new StringReader(line));
+            String[] csvFields = csvReader.readNext();
+            csvReader.close();
+            /* If province/state is not available, the country is considered */
+            String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
+            Double latitude = Double.parseDouble(csvFields[2]);
+            Double longitude = Double.parseDouble(csvFields[3]);
+            /* Retrieve number of days available for computations of daily increments of confirmed cases.
+             *  The first day in the dataset is not considered because the corresponding increment cannot be computed.
+             *  Furthermore, only completed week are considered */
+            int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 7));
+            /* Convert cumulative data to daily increments */
+            Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
+            /* Build RegionData object, representing the parsed line */
+            RegionData regionData = new RegionData(regionName, latitude, longitude, confirmedDailyIncrements);
+            /* Estimate Trend Line Coefficient associated to the world region */
+            Double tlcEstimate = GlobalDataUtils.computeCoefficientEstimate(confirmedDailyIncrements);
+            return new Tuple2<>(tlcEstimate, regionData);
+        } catch (IOException | CsvValidationException e) {
+            return new Tuple2<>(null, null); /* null in case of malformed input */
+        }
+
     }
+
 
 
     /*
@@ -106,10 +119,11 @@ public class Query2 {
         JavaSparkContext sc = new JavaSparkContext(conf);
         /* Import input file */
         JavaRDD<String> inputRDD = sc.textFile(args[0]);
-        // TODO possibly modify in case of header and malformed input handling at ingestion-time
-        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province") && !line.contains("\""));
+        // TODO possibly modify in case of header handling at ingestion-time
+        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province"));
         /* Identify the top-100 affected regions */
-        JavaPairRDD<Double, RegionData> regionsData = rddInputWithoutHeader.mapToPair(Query2::parseInputLine).sortByKey(false);
+        JavaPairRDD<Double, RegionData> regionsData = rddInputWithoutHeader.mapToPair(Query2::parseInputLine)
+                .filter(x -> x._1 != null).sortByKey(false);
         JavaPairRDD<Tuple2<Double,RegionData>, Long> top100AffectedRegionData = regionsData.zipWithIndex().filter(x -> x._2 <= 100);
         /* Aggregate data per continent and week */
         JavaPairRDD<String, Double[]> continentWeeklyIncrements = top100AffectedRegionData
