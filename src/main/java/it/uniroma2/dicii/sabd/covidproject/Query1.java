@@ -12,6 +12,9 @@ package it.uniroma2.dicii.sabd.covidproject;
  * the average number of swab tests in a day.
  *
  * The query is answered using Apache Spark.
+ *
+ * NOTE: In our data pipeline, the dataset described above has been pre-processed in order to remove the CSV header
+ * and to extract only the fields of interest.
  * */
 
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianDailyStats;
@@ -34,11 +37,10 @@ public class Query1 {
     private static ItalianDailyStats parseInputLine(String line) {
 
         /* Extract fields of interest from the CSV line */
-        // TODO possibly modify in case of feature extraction at ingestion-time
         String[] csvFields = line.split(",");
         String date = csvFields[0];
-        Integer cumulativeCured = Integer.parseInt(csvFields[9]);
-        Integer cumulativeSwabs = Integer.parseInt(csvFields[12]);
+        Integer cumulativeCured = Integer.parseInt(csvFields[1]);
+        Integer cumulativeSwabs = Integer.parseInt(csvFields[2]);
         /* Parsing date field */
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         LocalDate formattedDate = LocalDate.parse(date, formatter);
@@ -102,10 +104,8 @@ public class Query1 {
         JavaSparkContext sc = new JavaSparkContext(conf);
         /* Import input CSV file */
         JavaRDD<String> rddInput = sc.textFile(args[0]);
-        // TODO possibly modify in case of header extraction at ingestion-time
-        JavaRDD<String> rddInputWithoutHeader = rddInput.filter(line -> !line.contains("data"));
         /* Parse input CSV file */
-        JavaRDD<ItalianDailyStats> italianDailyStats = rddInputWithoutHeader.map(Query1::parseInputLine);
+        JavaRDD<ItalianDailyStats> italianDailyStats = rddInput.map(Query1::parseInputLine);
         // TODO coalesce in filtering to improve performance ?
         /* Since the statistics are computed on a weekly basis, only the measurements made at the end of the weeks are preserved */
         JavaRDD<ItalianDailyStats> italianWeeklyStats = italianDailyStats.filter(ids -> ids.getDayOfWeek() == 7);
