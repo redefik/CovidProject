@@ -31,7 +31,10 @@ public class GlobalDataUtils {
 
     }
 
-
+    /*
+    * Convert a vector of cumulative cases of Covid to a vector of daily increments.
+    * Errors in original dataset may cause negative increments. Negative increments are truncated to 0
+    * */
     public static Double[] convertCumulativeToIncrement(int availableDays, String[] csvFields) {
         Double[] dailyCumulativeConfirmed = new Double[availableDays + 1];
         for (int i = 0; i < dailyCumulativeConfirmed.length; i++) {
@@ -39,7 +42,8 @@ public class GlobalDataUtils {
         }
         Double[] confirmedDailyIncrements = new Double[availableDays];
         for (int i = 0; i < availableDays; i++) {
-            confirmedDailyIncrements[i] = dailyCumulativeConfirmed[i+1]-dailyCumulativeConfirmed[i];
+            double dailyIncrements = dailyCumulativeConfirmed[i+1]-dailyCumulativeConfirmed[i];
+            confirmedDailyIncrements[i] = (dailyIncrements < 0) ? 0 : dailyIncrements;
         }
         return confirmedDailyIncrements;
     }
