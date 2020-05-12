@@ -46,6 +46,7 @@ public class ContinentWeeklyStats implements Serializable {
         this.maxConfirmed = maxConfirmed;
     }
 
+    // TODO
     @Override
     public String toString() {
         return "ContinentWeeklyStats{" +

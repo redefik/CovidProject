@@ -15,6 +15,7 @@ public class ItalianWeeklyStats implements Serializable {
     public ItalianWeeklyStats() {
     }
 
+    // TODO
     public ItalianWeeklyStats(Float cured, Float swabs) {
         this.cured = cured;
         this.swabs = swabs;

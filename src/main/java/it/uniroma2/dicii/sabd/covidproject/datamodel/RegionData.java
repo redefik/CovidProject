@@ -1,8 +1,7 @@
 package it.uniroma2.dicii.sabd.covidproject.datamodel;
 
 /*
- * This class encapsulates the measurement of interests extracted from a line of the CSV input file used in the
- * second query.
+ * This class represents the covid-related data associated to a world region.
  * */
 
 import java.io.Serializable;
@@ -14,13 +13,8 @@ public class RegionData implements Serializable {
     private Double latitude;
     private Double longitude;
     private Double[] confirmedDailyIncrements; /* daily increments of confirmed cases of Covid */
-
-    public RegionData(String name, Double latitude, Double longitude, Double[] confirmedDailyIncrements) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.confirmedDailyIncrements = confirmedDailyIncrements;
-    }
+                                               /* NOTE: the length of this array depends on the considered period of observation (week, month...) */
+    private Double trendLineCoefficient;       /* trend line coefficient that approximates the trend corresponding to confirmedDailyIncrements */
 
     public String getName() {
         return name;
@@ -54,6 +48,14 @@ public class RegionData implements Serializable {
         this.confirmedDailyIncrements = confirmedDailyIncrements;
     }
 
+    public Double getTrendLineCoefficient() {
+        return trendLineCoefficient;
+    }
+
+    public void setTrendLineCoefficient(Double trendLineCoefficient) {
+        this.trendLineCoefficient = trendLineCoefficient;
+    }
+    // TODO
     @Override
     public String toString() {
         return "RegionData{" +

@@ -29,7 +29,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
@@ -55,7 +54,11 @@ public class Query2 {
             /* Convert cumulative data to daily increments */
             Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
             /* Build RegionData object, representing the parsed line */
-            RegionData regionData = new RegionData(regionName, latitude, longitude, confirmedDailyIncrements);
+            RegionData regionData = new RegionData();
+            regionData.setName(regionName);
+            regionData.setLatitude(latitude);
+            regionData.setLongitude(longitude);
+            regionData.setConfirmedDailyIncrements(confirmedDailyIncrements);
             /* Estimate Trend Line Coefficient associated to the world region */
             Double tlcEstimate = GlobalDataUtils.computeCoefficientEstimate(confirmedDailyIncrements);
             return new Tuple2<>(tlcEstimate, regionData);
