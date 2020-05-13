@@ -122,10 +122,8 @@ public class Query2 {
         JavaSparkContext sc = new JavaSparkContext(conf);
         /* Import input file */
         JavaRDD<String> inputRDD = sc.textFile(args[0]);
-        // TODO possibly modify in case of header handling at ingestion-time
-        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province"));
         /* Identify the top-100 affected regions */
-        JavaPairRDD<Double, RegionData> regionsData = rddInputWithoutHeader.mapToPair(Query2::parseInputLine)
+        JavaPairRDD<Double, RegionData> regionsData = inputRDD.mapToPair(Query2::parseInputLine)
                 .filter(x -> x._1 != null).sortByKey(false);
         JavaPairRDD<Tuple2<Double,RegionData>, Long> top100AffectedRegionData = regionsData.zipWithIndex().filter(x -> x._2 <= 100);
         /* Aggregate data per continent and week */
