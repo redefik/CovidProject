@@ -35,6 +35,9 @@ import java.util.*;
 
 public class Query2 {
 
+    /* The considered period of observations starts from Monday, 27th January 2020 */
+    private final static int FIRST_WEEK_OF_OBSERVATION = 5;
+
     /* Parse a line of the CSV dataset */
     private static Tuple2<Double, RegionData> parseInputLine(String line) {
 
@@ -48,9 +51,9 @@ public class Query2 {
             Double latitude = Double.parseDouble(csvFields[2]);
             Double longitude = Double.parseDouble(csvFields[3]);
             /* Retrieve number of days available for computations of daily increments of confirmed cases.
-             *  The first day in the dataset is not considered because the corresponding increment cannot be computed.
+             *  The considered period of observations starts from Monday, 27th January 2020.
              *  Furthermore, only completed week are considered */
-            int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 7));
+            int availableDays = ((csvFields.length - 9) - ((csvFields.length - 9) % 7));
             /* Convert cumulative data to daily increments */
             Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
             /* Build RegionData object, representing the parsed line */
@@ -86,7 +89,7 @@ public class Query2 {
         for (int k = 0; k < numOfWeeks; k++) {
             Double[] weeklyIncrements = new Double[7];
             System.arraycopy(confirmedDailyIncrements, k * 7, weeklyIncrements, 0, 7);
-            String key = continent.toString() + "," + k;
+            String key = continent.toString() + "," + (k + FIRST_WEEK_OF_OBSERVATION);
             output.add(new Tuple2<>(key, weeklyIncrements));
         }
         return output.iterator();

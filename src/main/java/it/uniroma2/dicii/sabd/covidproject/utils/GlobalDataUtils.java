@@ -38,7 +38,7 @@ public class GlobalDataUtils {
     public static Double[] convertCumulativeToIncrement(int availableDays, String[] csvFields) {
         Double[] dailyCumulativeConfirmed = new Double[availableDays + 1];
         for (int i = 0; i < dailyCumulativeConfirmed.length; i++) {
-            dailyCumulativeConfirmed[i] = Double.parseDouble(csvFields[i+4]);
+            dailyCumulativeConfirmed[i] = Double.parseDouble(csvFields[i+8]);
         }
         Double[] confirmedDailyIncrements = new Double[availableDays];
         for (int i = 0; i < availableDays; i++) {
