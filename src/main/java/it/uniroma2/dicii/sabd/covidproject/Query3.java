@@ -217,13 +217,11 @@ public class Query3 {
         JavaSparkContext sc = new JavaSparkContext(conf);
         /* Import input file */
         JavaRDD<String> inputRDD = sc.textFile(args[0]);
-        // TODO possibly modify in case of header handling at ingestion-time
-        JavaRDD<String> rddInputWithoutHeader = inputRDD.filter(line -> !line.contains("Province"));
         /*
         * Extract from each input line an <k,v> pair where k is the index of the month and v the corresponding
         * RegionData object
         *  */
-        JavaPairRDD<Integer, RegionData> monthlyRegionsData = rddInputWithoutHeader
+        JavaPairRDD<Integer, RegionData> monthlyRegionsData = inputRDD
                 .flatMapToPair(Query3::parseInputLine)
                 .filter(x -> x._1 != null)
                 .cache();
