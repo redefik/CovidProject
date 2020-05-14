@@ -15,6 +15,7 @@ public class RegionData implements Serializable {
     private Double[] confirmedDailyIncrements; /* daily increments of confirmed cases of Covid */
                                                /* NOTE: the length of this array depends on the considered period of observation (week, month...) */
     private Double trendLineCoefficient;       /* trend line coefficient that approximates the trend corresponding to confirmedDailyIncrements */
+    private Integer month;                     /* if populated, it represents the index of the month corresponding to the above statistics */
 
     public String getName() {
         return name;
@@ -55,6 +56,15 @@ public class RegionData implements Serializable {
     public void setTrendLineCoefficient(Double trendLineCoefficient) {
         this.trendLineCoefficient = trendLineCoefficient;
     }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
     // TODO
     @Override
     public String toString() {

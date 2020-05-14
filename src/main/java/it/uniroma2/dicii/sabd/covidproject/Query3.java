@@ -54,22 +54,27 @@ public class Query3 {
             csvReader.close();
             /* If province/state is not available, the country is considered */
             String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
+            double latitude = Double.parseDouble(csvFields[2]);
+            double longitude = Double.parseDouble(csvFields[3]);
             /* Retrieve number of days available for computations of daily increments of confirmed cases.
-             * Only completed months are considered and the first day is not considered since the increment is not
-             * computable. The months duration is assumed to be 30 days for sake of simplicity */
-            int availableDays = ((csvFields.length - 5) - ((csvFields.length - 5) % 30));
+             *  The considered period of observations starts from Monday, 27th January 2020.
+             *  Furthermore, only completed month are considered and a month is assumed to be a 4-week period */
+            int availableDays = ((csvFields.length - 9) - ((csvFields.length - 9) % 28));
             /* Convert cumulative data to daily increments of confirmed cases */
             Double[] confirmedDailyIncrements = GlobalDataUtils.convertCumulativeToIncrement(availableDays, csvFields);
-            int numberOfMonths = confirmedDailyIncrements.length / 30;
+            int numberOfMonths = confirmedDailyIncrements.length / 28;
             /* For each month, a RegionData object, representing the monthly trend line coefficient of a region,
              * is produced */
             List<Tuple2<Integer, RegionData>> output = new ArrayList<>();
             for (int i = 0; i < numberOfMonths; i++) {
-                Double[] monthlyIncrements = new Double[30];
-                System.arraycopy(confirmedDailyIncrements, i * 30, monthlyIncrements, 0, 30);
+                Double[] monthlyIncrements = new Double[28];
+                System.arraycopy(confirmedDailyIncrements, i * 28, monthlyIncrements, 0, 28);
                 RegionData monthlyRegionData = new RegionData();
                 monthlyRegionData.setName(regionName);
                 monthlyRegionData.setTrendLineCoefficient(GlobalDataUtils.computeCoefficientEstimate(monthlyIncrements));
+                monthlyRegionData.setLatitude(latitude);
+                monthlyRegionData.setLongitude(longitude);
+                monthlyRegionData.setMonth(i);
                 output.add(new Tuple2<>(i, monthlyRegionData));
             }
             return output.iterator();
@@ -84,17 +89,10 @@ public class Query3 {
     /*
      * Apply a MLlib implementation of k-means. For the details of this implementation, see Apache Spark documentation
      * */
-    private static void kMeansMLlib(JavaSparkContext sc, JavaPairRDD<Double,String> trendRegionPairs, String outputDirectory) {
+    private static void kMeansMLlib(JavaSparkContext sc, JavaPairRDD<Double,RegionData> trendRegionPairs, String outputDirectory) {
         SparkSession ss = SparkSession.builder().config(sc.getConf()).getOrCreate();
         /* Convert input RDD to DataFrame */
-        Dataset<Row> trendRegionsDF = ss.createDataFrame(trendRegionPairs.map(x ->
-                {
-                    RegionData regionData = new RegionData();
-                    regionData.setName(x._2);
-                    regionData.setTrendLineCoefficient(x._1);
-                    return regionData;
-                }),
-                RegionData.class);
+        Dataset<Row> trendRegionsDF = ss.createDataFrame(trendRegionPairs.map(x -> x._2), RegionData.class);
         /* Set feature column in dataset */
         String[] featureCols = {"trendLineCoefficient"};
         VectorAssembler assembler = new VectorAssembler().setInputCols(featureCols).setOutputCol("features");
@@ -104,14 +102,14 @@ public class Query3 {
         KMeansModel model = kMeans.fit(featuredDF);
         Dataset<Row> clusteredRegions = model.transform(featuredDF);
         /* Save clustering results in a CSV file */
-        clusteredRegions.select("prediction","name","trendLineCoefficient")
+        clusteredRegions.select("prediction","month", "name", "latitude", "longitude", "trendLineCoefficient")
                 .write().format("csv").option("header", "false").save(outputDirectory);
     }
 
     /*
     * Given a trend coefficient value and a vector of centroids, identify the index of the centroid at minimum distance
     * */
-    public static Tuple2<Integer, RegionData> assignRegionToCluster(Tuple2<Double,String> trendRegion, Double[] centroids) {
+    public static Tuple2<Integer, RegionData> assignRegionToCluster(Tuple2<Double,RegionData> trendRegion, Double[] centroids) {
         int minDistanceCentroid = 0;
         double minDistance = Double.MAX_VALUE;
         for (int i = 0; i < centroids.length; i++) {
@@ -121,10 +119,10 @@ public class Query3 {
                 minDistanceCentroid = i;
             }
         }
-        RegionData regionData = new RegionData();
-        regionData.setName(trendRegion._2);
-        regionData.setTrendLineCoefficient(trendRegion._1);
-        return new Tuple2<>(minDistanceCentroid, regionData);
+        /*RegionData regionData = new RegionData();
+        regionData.setName(trendRegion._2.getName());
+        regionData.setTrendLineCoefficient(trendRegion._1);*/
+        return new Tuple2<>(minDistanceCentroid, trendRegion._2);
     }
 
     /*
@@ -164,7 +162,7 @@ public class Query3 {
     *   between the vector of new centroids and the vector of old centroids is lower than K_MEANS_ERROR_THRESHOLD
     * - Euclidean distance is used
     * */
-    public static void kMeansNaive(JavaPairRDD<Double,String> trendRegionPairs, String outputDirectory) {
+    public static void kMeansNaive(JavaPairRDD<Double,RegionData> trendRegionPairs, String outputDirectory) {
 
         List<Double> trendCoefficients = trendRegionPairs.map(x -> x._1).distinct().collect();
         double[] trendCoefficientsArray = new double[trendCoefficients.size()];
@@ -190,7 +188,9 @@ public class Query3 {
         }
         /* clusteredTrendCoefficientRegions is recomputed from trendRegionPairs but caching is not worthwhile since
         *  this re-computation is done only once in the algorithm and implies the execution of a single transformation */
-        clusteredTrendCoefficientRegions.map(x -> x._1 + "," + x._2.getName()).saveAsTextFile(outputDirectory);
+        clusteredTrendCoefficientRegions.
+                map(x -> x._1 + "," + x._2.getMonth() + "," + x._2.getName() + "," + x._2.getLatitude() + "," + x._2.getLongitude() +
+                        "," + x._2.getTrendLineCoefficient()).saveAsTextFile(outputDirectory);
 
     }
 
@@ -232,11 +232,10 @@ public class Query3 {
             final int monthIndex = k;
             JavaPairRDD<Integer, RegionData> kthMonthRegionData =
                     monthlyRegionsData.filter(x -> x._1 == monthIndex);
-            List<Tuple2<Double, String>> top50MonthlyAffectedRegion = kthMonthRegionData
-                    .mapToPair(x -> new Tuple2<>(x._2.getTrendLineCoefficient(), x._2.getName()))
+            List<Tuple2<Double, RegionData>> top50MonthlyAffectedRegion = kthMonthRegionData
+                    .mapToPair(x -> new Tuple2<>(x._2.getTrendLineCoefficient(), x._2))
                     .top(50, new TrendLineMonthlyRegionComparator());
-            // TODO replace string with object
-            JavaPairRDD<Double, String> top50MonthlyAffectedRegionRDD =
+            JavaPairRDD<Double, RegionData> top50MonthlyAffectedRegionRDD =
                     sc.parallelizePairs(top50MonthlyAffectedRegion).cache();
             /* A different implementation of k-means is invoked on the basis of the provided parameter */
             if (mode.equals("naive")) {
