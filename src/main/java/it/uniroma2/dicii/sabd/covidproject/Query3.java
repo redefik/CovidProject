@@ -13,12 +13,15 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.ml.clustering.KMeans;
 import org.apache.spark.ml.clustering.KMeansModel;
 import org.apache.spark.ml.feature.VectorAssembler;
+import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
 import scala.Tuple2;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.*;
 
 /*
@@ -53,7 +56,8 @@ public class Query3 {
             String[] csvFields = csvReader.readNext();
             csvReader.close();
             /* If province/state is not available, the country is considered */
-            String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
+            String regionName = (csvFields[0].equals("") ? csvFields[1] : csvFields[0]).replaceAll("[,*\"]","");
+            System.out.println(regionName);
             double latitude = Double.parseDouble(csvFields[2]);
             double longitude = Double.parseDouble(csvFields[3]);
             /* Retrieve number of days available for computations of daily increments of confirmed cases.
@@ -101,8 +105,11 @@ public class Query3 {
         KMeans kMeans = new KMeans().setK(NUM_OF_K_MEANS_CLUSTERS).setSeed(K_MEANS_MLLIB_SEED);
         KMeansModel model = kMeans.fit(featuredDF);
         Dataset<Row> clusteredRegions = model.transform(featuredDF);
+        Dataset<Row> formattedDF = clusteredRegions.withColumn("newTrendLineCoefficient",
+                new Column("trendLineCoefficient").cast(DataTypes.createDecimalType(12, 6))).drop("trendLineCoefficient")
+                .withColumnRenamed("newTrendLineCoefficient", "trendLineCoefficient").toDF();
         /* Save clustering results in a CSV file */
-        clusteredRegions.select("prediction","month", "name", "latitude", "longitude", "trendLineCoefficient")
+        formattedDF.select("month", "name", "prediction", "latitude", "longitude", "trendLineCoefficient")
                 .write().format("csv").option("header", "false").save(outputDirectory);
     }
 
@@ -186,12 +193,9 @@ public class Query3 {
                 break;
             }
         }
-        /* clusteredTrendCoefficientRegions is recomputed from trendRegionPairs but caching is not worthwhile since
-        *  this re-computation is done only once in the algorithm and implies the execution of a single transformation */
         clusteredTrendCoefficientRegions.
-                map(x -> x._1 + "," + x._2.getMonth() + "," + x._2.getName() + "," + x._2.getLatitude() + "," + x._2.getLongitude() +
-                        "," + x._2.getTrendLineCoefficient()).saveAsTextFile(outputDirectory);
-
+                map(x -> x._2.getMonth() + "," + x._2.getName() + "," + x._1 + "," + x._2.getLatitude() + "," + x._2.getLongitude() +
+                        "," + BigDecimal.valueOf(x._2.getTrendLineCoefficient()).toPlainString()).saveAsTextFile(outputDirectory);
     }
 
 

@@ -47,7 +47,7 @@ public class Query2 {
             String[] csvFields = csvReader.readNext();
             csvReader.close();
             /* If province/state is not available, the country is considered */
-            String regionName = csvFields[0].equals("") ? csvFields[1] : csvFields[0];
+            String regionName = (csvFields[0].equals("") ? csvFields[1] : csvFields[0]).replaceAll("[,*]","");
             Double latitude = Double.parseDouble(csvFields[2]);
             Double longitude = Double.parseDouble(csvFields[3]);
             /* Retrieve number of days available for computations of daily increments of confirmed cases.
