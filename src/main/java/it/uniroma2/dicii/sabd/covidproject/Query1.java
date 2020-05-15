@@ -17,6 +17,8 @@ package it.uniroma2.dicii.sabd.covidproject;
  * and to extract only the fields of interest.
  * */
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianDailyStats;
 import it.uniroma2.dicii.sabd.covidproject.datamodel.ItalianWeeklyStats;
 import org.apache.spark.SparkConf;
@@ -24,6 +26,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
@@ -36,22 +41,31 @@ public class Query1 {
     /* Parse a line of the CSV dataset */
     private static ItalianDailyStats parseInputLine(String line) {
 
-        /* Extract fields of interest from the CSV line */
-        String[] csvFields = line.split(",");
-        String date = csvFields[0];
-        Integer cumulativeCured = Integer.parseInt(csvFields[1]);
-        Integer cumulativeSwabs = Integer.parseInt(csvFields[2]);
-        /* Parsing date field */
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
-        LocalDate formattedDate = LocalDate.parse(date, formatter);
-        /* Build ItalianDailyStats object */
-        ItalianDailyStats italianDailyStats = new ItalianDailyStats();
-        italianDailyStats.setCumulativeCured(cumulativeCured);
-        italianDailyStats.setCumulativeSwabs(cumulativeSwabs);
-        italianDailyStats.setDayOfWeek(formattedDate.getDayOfWeek().getValue());
-        italianDailyStats.setWeekOfYear(formattedDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
+        try {
+            /* Extract fields of interest from the CSV line */
+            CSVReader csvReader = new CSVReader(new StringReader(line));
+            String[] csvFields = csvReader.readNext();
+            csvReader.close();
+            if (csvFields == null) {
+                return null;
+            }
+            String date = csvFields[0];
+            Integer cumulativeCured = Integer.parseInt(csvFields[1]);
+            Integer cumulativeSwabs = Integer.parseInt(csvFields[2]);
+            /* Parsing date field */
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+            LocalDate formattedDate = LocalDate.parse(date, formatter);
+            /* Build ItalianDailyStats object */
+            ItalianDailyStats italianDailyStats = new ItalianDailyStats();
+            italianDailyStats.setCumulativeCured(cumulativeCured);
+            italianDailyStats.setCumulativeSwabs(cumulativeSwabs);
+            italianDailyStats.setDayOfWeek(formattedDate.getDayOfWeek().getValue());
+            italianDailyStats.setWeekOfYear(formattedDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
 
-        return italianDailyStats;
+            return italianDailyStats;
+        } catch (CsvValidationException | IOException e) {
+            return null;
+        }
     }
 
 
@@ -105,7 +119,7 @@ public class Query1 {
         /* Import input CSV file */
         JavaRDD<String> rddInput = sc.textFile(args[0]);
         /* Parse input CSV file */
-        JavaRDD<ItalianDailyStats> italianDailyStats = rddInput.map(Query1::parseInputLine);
+        JavaRDD<ItalianDailyStats> italianDailyStats = rddInput.map(Query1::parseInputLine).filter(Objects::nonNull);
         // TODO coalesce in filtering to improve performance ?
         /* Since the statistics are computed on a weekly basis, only the measurements made at the end of the weeks are preserved */
         JavaRDD<ItalianDailyStats> italianWeeklyStats = italianDailyStats.filter(ids -> ids.getDayOfWeek() == 7);
