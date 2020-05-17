@@ -1,42 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <template encoding-version="1.3">
     <description></description>
-    <groupId>b61d1c84-1a63-3b80-692c-27769c6fb41d</groupId>
-    <name>ItalianCovidDatasetIngestion</name>
+    <groupId>bbc2f1ad-0171-1000-18a4-5e634f5a3048</groupId>
+    <name>GlobalDatasetIngestionv2.0</name>
     <snippet>
         <connections>
-            <id>14f7df84-aedb-39b4-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
+            <id>1058944b-30f2-3d2b-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <destination>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>c79055db-976a-3011-0000-000000000000</id>
-                <type>PROCESSOR</type>
-            </destination>
-            <flowFileExpiration>0 sec</flowFileExpiration>
-            <labelIndex>1</labelIndex>
-            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
-            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
-            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-            <name></name>
-            <selectedRelationships>success</selectedRelationships>
-            <source>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>6221a618-3b19-3815-0000-000000000000</id>
-                <type>PROCESSOR</type>
-            </source>
-            <zIndex>0</zIndex>
-        </connections>
-        <connections>
-            <id>7821bb9d-30ab-366d-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
-            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
-            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
-            <destination>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>e93f1f32-af8d-38a4-0000-000000000000</id>
+                <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
+                <id>a1018a78-2409-33fd-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </destination>
             <flowFileExpiration>0 sec</flowFileExpiration>
@@ -48,20 +23,20 @@
             <name></name>
             <selectedRelationships>Response</selectedRelationships>
             <source>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>9b0d95b9-ecec-353a-0000-000000000000</id>
+                <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
+                <id>910c9000-1184-3dd0-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </source>
             <zIndex>0</zIndex>
         </connections>
         <connections>
-            <id>b57a155b-5ab7-3ba0-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
+            <id>f8686769-b286-363a-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <destination>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>6221a618-3b19-3815-0000-000000000000</id>
+                <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
+                <id>55a12d5f-9d6d-3053-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </destination>
             <flowFileExpiration>0 sec</flowFileExpiration>
@@ -73,21 +48,21 @@
             <name></name>
             <selectedRelationships>success</selectedRelationships>
             <source>
-                <groupId>f4f4b284-8129-32da-0000-000000000000</groupId>
-                <id>e93f1f32-af8d-38a4-0000-000000000000</id>
+                <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
+                <id>a1018a78-2409-33fd-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </source>
             <zIndex>0</zIndex>
         </connections>
         <processors>
-            <id>6221a618-3b19-3815-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
+            <id>55a12d5f-9d6d-3053-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <position>
                 <x>760.0</x>
-                <y>224.0</y>
+                <y>264.0000000000001</y>
             </position>
             <bundle>
-                <artifact>nifi-standard-nar</artifact>
+                <artifact>nifi-hadoop-nar</artifact>
                 <group>org.apache.nifi</group>
                 <version>1.11.4</version>
             </bundle>
@@ -97,45 +72,100 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
-                        <key>Regular Expression</key>
+                        <key>Hadoop Configuration Resources</key>
                         <value>
-                            <name>Regular Expression</name>
+                            <name>Hadoop Configuration Resources</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Replacement Value</key>
+                        <key>kerberos-credentials-service</key>
                         <value>
-                            <name>Replacement Value</name>
+                            <identifiesControllerService>org.apache.nifi.kerberos.KerberosCredentialsService</identifiesControllerService>
+                            <name>kerberos-credentials-service</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Character Set</key>
+                        <key>Kerberos Principal</key>
                         <value>
-                            <name>Character Set</name>
+                            <name>Kerberos Principal</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Maximum Buffer Size</key>
+                        <key>Kerberos Keytab</key>
                         <value>
-                            <name>Maximum Buffer Size</name>
+                            <name>Kerberos Keytab</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Replacement Strategy</key>
+                        <key>Kerberos Relogin Period</key>
                         <value>
-                            <name>Replacement Strategy</name>
+                            <name>Kerberos Relogin Period</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Evaluation Mode</key>
+                        <key>Additional Classpath Resources</key>
                         <value>
-                            <name>Evaluation Mode</name>
+                            <name>Additional Classpath Resources</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
+                        <key>Directory</key>
                         <value>
-                            <name>Line-by-Line Evaluation Mode</name>
+                            <name>Directory</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Conflict Resolution Strategy</key>
+                        <value>
+                            <name>Conflict Resolution Strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
+                        <value>
+                            <name>Block Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                        <value>
+                            <name>IO Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Replication</key>
+                        <value>
+                            <name>Replication</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Permissions umask</key>
+                        <value>
+                            <name>Permissions umask</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                        <value>
+                            <name>Remote Owner</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                        <value>
+                            <name>Remote Group</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>
+                            <name>Compression codec</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Ignore Locality</key>
+                        <value>
+                            <name>Ignore Locality</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -144,32 +174,58 @@
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
-                        <key>Regular Expression</key>
-                        <value>^data,dimessi_guariti,tamponi\n</value>
+                        <key>Hadoop Configuration Resources</key>
+                        <value>/home/federico/hadoop_conf/pseudod/hdfs-site.xml,/home/federico/hadoop_conf/pseudod/core-site.xml</value>
                     </entry>
                     <entry>
-                        <key>Replacement Value</key>
-                        <value></value>
+                        <key>kerberos-credentials-service</key>
                     </entry>
                     <entry>
-                        <key>Character Set</key>
-                        <value>UTF-8</value>
+                        <key>Kerberos Principal</key>
                     </entry>
                     <entry>
-                        <key>Maximum Buffer Size</key>
-                        <value>1 MB</value>
+                        <key>Kerberos Keytab</key>
                     </entry>
                     <entry>
-                        <key>Replacement Strategy</key>
-                        <value>Regex Replace</value>
+                        <key>Kerberos Relogin Period</key>
+                        <value>4 hours</value>
                     </entry>
                     <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Line-by-Line</value>
+                        <key>Additional Classpath Resources</key>
                     </entry>
                     <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
+                        <key>Directory</key>
+                        <value>/covidProject/globalData/${now():format("yyyy-MM-dd")}</value>
+                    </entry>
+                    <entry>
+                        <key>Conflict Resolution Strategy</key>
+                        <value>fail</value>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                    </entry>
+                    <entry>
+                        <key>Replication</key>
+                    </entry>
+                    <entry>
+                        <key>Permissions umask</key>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>NONE</value>
+                    </entry>
+                    <entry>
+                        <key>Ignore Locality</key>
+                        <value>false</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -178,27 +234,27 @@
                 <yieldDuration>1 sec</yieldDuration>
             </config>
             <executionNodeRestricted>false</executionNodeRestricted>
-            <name>RemoveCSVHeader</name>
+            <name>ImportGlobalDatasetInHDFS</name>
             <relationships>
                 <autoTerminate>true</autoTerminate>
                 <name>failure</name>
             </relationships>
             <relationships>
-                <autoTerminate>false</autoTerminate>
+                <autoTerminate>true</autoTerminate>
                 <name>success</name>
             </relationships>
             <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
-                    <value>#209ee6</value>
+                    <value>#04bd73</value>
                 </entry>
             </style>
-            <type>org.apache.nifi.processors.standard.ReplaceText</type>
+            <type>org.apache.nifi.processors.hadoop.PutHDFS</type>
         </processors>
         <processors>
-            <id>9b0d95b9-ecec-353a-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
+            <id>910c9000-1184-3dd0-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <position>
                 <x>0.0</x>
                 <y>0.0</y>
@@ -394,7 +450,7 @@
                     </entry>
                     <entry>
                         <key>Remote URL</key>
-                        <value>https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv</value>
+                        <value>https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv</value>
                     </entry>
                     <entry>
                         <key>SSL Context Service</key>
@@ -497,7 +553,7 @@
                 <yieldDuration>1 sec</yieldDuration>
             </config>
             <executionNodeRestricted>false</executionNodeRestricted>
-            <name>DownloadItalianDataset</name>
+            <name>DownloadGlobalDataset</name>
             <relationships>
                 <autoTerminate>true</autoTerminate>
                 <name>Failure</name>
@@ -522,215 +578,17 @@
             <style>
                 <entry>
                     <key>background-color</key>
-                    <value>#209ee6</value>
+                    <value>#04bd73</value>
                 </entry>
             </style>
             <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
         </processors>
         <processors>
-            <id>c79055db-976a-3011-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
+            <id>a1018a78-2409-33fd-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <position>
-                <x>0.0</x>
-                <y>224.0</y>
-            </position>
-            <bundle>
-                <artifact>nifi-hadoop-nar</artifact>
-                <group>org.apache.nifi</group>
-                <version>1.11.4</version>
-            </bundle>
-            <config>
-                <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
-                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
-                <descriptors>
-                    <entry>
-                        <key>Hadoop Configuration Resources</key>
-                        <value>
-                            <name>Hadoop Configuration Resources</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>kerberos-credentials-service</key>
-                        <value>
-                            <identifiesControllerService>org.apache.nifi.kerberos.KerberosCredentialsService</identifiesControllerService>
-                            <name>kerberos-credentials-service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Principal</key>
-                        <value>
-                            <name>Kerberos Principal</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Keytab</key>
-                        <value>
-                            <name>Kerberos Keytab</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Relogin Period</key>
-                        <value>
-                            <name>Kerberos Relogin Period</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Additional Classpath Resources</key>
-                        <value>
-                            <name>Additional Classpath Resources</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Directory</key>
-                        <value>
-                            <name>Directory</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Conflict Resolution Strategy</key>
-                        <value>
-                            <name>Conflict Resolution Strategy</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Block Size</key>
-                        <value>
-                            <name>Block Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                        <value>
-                            <name>IO Buffer Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                        <value>
-                            <name>Replication</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                        <value>
-                            <name>Permissions umask</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                        <value>
-                            <name>Remote Owner</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                        <value>
-                            <name>Remote Group</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>
-                            <name>Compression codec</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>
-                            <name>Ignore Locality</name>
-                        </value>
-                    </entry>
-                </descriptors>
-                <executionNode>ALL</executionNode>
-                <lossTolerant>false</lossTolerant>
-                <penaltyDuration>30 sec</penaltyDuration>
-                <properties>
-                    <entry>
-                        <key>Hadoop Configuration Resources</key>
-                        <value>/home/federico/hadoop_conf/pseudod/hdfs-site.xml,/home/federico/hadoop_conf/pseudod/core-site.xml</value>
-                    </entry>
-                    <entry>
-                        <key>kerberos-credentials-service</key>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Principal</key>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Keytab</key>
-                    </entry>
-                    <entry>
-                        <key>Kerberos Relogin Period</key>
-                        <value>4 hours</value>
-                    </entry>
-                    <entry>
-                        <key>Additional Classpath Resources</key>
-                    </entry>
-                    <entry>
-                        <key>Directory</key>
-                        <value>/covidProject/nationalData/${now():format("yyyy-MM-dd")}</value>
-                    </entry>
-                    <entry>
-                        <key>Conflict Resolution Strategy</key>
-                        <value>fail</value>
-                    </entry>
-                    <entry>
-                        <key>Block Size</key>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>NONE</value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>false</value>
-                    </entry>
-                </properties>
-                <runDurationMillis>0</runDurationMillis>
-                <schedulingPeriod>0 sec</schedulingPeriod>
-                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-                <yieldDuration>1 sec</yieldDuration>
-            </config>
-            <executionNodeRestricted>false</executionNodeRestricted>
-            <name>ImportItalianDatasetInHDFS</name>
-            <relationships>
-                <autoTerminate>true</autoTerminate>
-                <name>failure</name>
-            </relationships>
-            <relationships>
-                <autoTerminate>true</autoTerminate>
-                <name>success</name>
-            </relationships>
-            <state>STOPPED</state>
-            <style>
-                <entry>
-                    <key>background-color</key>
-                    <value>#209ee6</value>
-                </entry>
-            </style>
-            <type>org.apache.nifi.processors.hadoop.PutHDFS</type>
-        </processors>
-        <processors>
-            <id>e93f1f32-af8d-38a4-0000-000000000000</id>
-            <parentGroupId>f4f4b284-8129-32da-0000-000000000000</parentGroupId>
-            <position>
-                <x>760.0</x>
-                <y>8.0</y>
+                <x>752.0</x>
+                <y>0.0</y>
             </position>
             <bundle>
                 <artifact>nifi-standard-nar</artifact>
@@ -791,11 +649,11 @@
                 <properties>
                     <entry>
                         <key>Regular Expression</key>
-                        <value>^(.*,)((?:.*,){8})(.*,)((?:.*,){2})(.*)(,)((?:.*,){2})(.*)</value>
+                        <value>^(.*)\n</value>
                     </entry>
                     <entry>
                         <key>Replacement Value</key>
-                        <value>$1$3$5</value>
+                        <value></value>
                     </entry>
                     <entry>
                         <key>Character Set</key>
@@ -811,7 +669,7 @@
                     </entry>
                     <entry>
                         <key>Evaluation Mode</key>
-                        <value>Line-by-Line</value>
+                        <value>Entire text</value>
                     </entry>
                     <entry>
                         <key>Line-by-Line Evaluation Mode</key>
@@ -824,7 +682,7 @@
                 <yieldDuration>1 sec</yieldDuration>
             </config>
             <executionNodeRestricted>false</executionNodeRestricted>
-            <name>ExtractFieldsOfInterest</name>
+            <name>RemoveCSVHeader</name>
             <relationships>
                 <autoTerminate>true</autoTerminate>
                 <name>failure</name>
@@ -837,11 +695,11 @@
             <style>
                 <entry>
                     <key>background-color</key>
-                    <value>#209ee6</value>
+                    <value>#04bd73</value>
                 </entry>
             </style>
             <type>org.apache.nifi.processors.standard.ReplaceText</type>
         </processors>
     </snippet>
-    <timestamp>05/10/2020 14:45:26 CEST</timestamp>
+    <timestamp>05/17/2020 09:58:57 CEST</timestamp>
 </template>
