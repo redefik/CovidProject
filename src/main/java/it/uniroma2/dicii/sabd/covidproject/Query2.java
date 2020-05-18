@@ -31,6 +31,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Query2 {
@@ -142,8 +143,11 @@ public class Query2 {
                 mapValues(Query2::computeContinentWeeklyStats).sortByKey(new KeyContinentWeekComparator());
         /* Save results in CSV format into the output directory provided by the user */
         JavaRDD<String> csvOutput = continentWeeklyStats.map(
-                cws -> cws._1 + "," + cws._2.getAvgConfirmed() + "," + cws._2.getMaxConfirmed() + ","
-                        + cws._2.getMinConfirmed() + "," + cws._2.getStdevConfirmed());
+                cws -> cws._1 + "," + BigDecimal.valueOf(cws._2.getAvgConfirmed()).toPlainString() + ","
+                        + BigDecimal.valueOf(cws._2.getMaxConfirmed()).toPlainString() + ","
+                        + BigDecimal.valueOf(cws._2.getMinConfirmed()).toPlainString() + ","
+                        + BigDecimal.valueOf(cws._2.getStdevConfirmed()).toPlainString()
+                );
         csvOutput.saveAsTextFile(args[1]);
         /* Spark shutdown */
         sc.stop();

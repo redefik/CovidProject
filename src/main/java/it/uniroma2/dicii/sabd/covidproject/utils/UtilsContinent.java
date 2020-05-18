@@ -1,6 +1,5 @@
 package it.uniroma2.dicii.sabd.covidproject.utils;
 
-// TODO CONSIDER THE IDEA TO MAKE IT A BROADCAST VARIABLE
 /*
  * This utility class provides a method to identify a continent by a <latitude, longitude> pair.
  * The check is made using Polygon Java class.
@@ -18,15 +17,15 @@ public class UtilsContinent
     }
 
     /* Each polygon represents a continent or a fraction of it */
-    Polygon northAmerica;
-    Polygon southAmerica;
-    Polygon africa;
-    Polygon europe;
-    Polygon asia1;
-    Polygon asia2;
-    Polygon oceania1;
-    Polygon oceania2;
-    Polygon antarctica;
+    private Polygon northAmerica;
+    private Polygon southAmerica;
+    private Polygon africa;
+    private Polygon europe;
+    private Polygon asia1;
+    private Polygon asia2;
+    private Polygon oceania1;
+    private Polygon oceania2;
+    private Polygon antarctica;
 
     public UtilsContinent() {
         northAmerica = new Polygon();

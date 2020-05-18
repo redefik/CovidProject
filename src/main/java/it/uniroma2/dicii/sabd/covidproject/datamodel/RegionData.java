@@ -5,7 +5,6 @@ package it.uniroma2.dicii.sabd.covidproject.datamodel;
  * */
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class RegionData implements Serializable {
 
@@ -65,14 +64,4 @@ public class RegionData implements Serializable {
         this.month = month;
     }
 
-    // TODO
-    @Override
-    public String toString() {
-        return "RegionData{" +
-                "name='" + name + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", confirmedDailyIncrements=" + Arrays.toString(confirmedDailyIncrements) +
-                '}';
-    }
 }

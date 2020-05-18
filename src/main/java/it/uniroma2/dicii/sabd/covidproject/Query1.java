@@ -120,7 +120,6 @@ public class Query1 {
         JavaRDD<String> rddInput = sc.textFile(args[0]);
         /* Parse input CSV file */
         JavaRDD<ItalianDailyStats> italianDailyStats = rddInput.map(Query1::parseInputLine).filter(Objects::nonNull);
-        // TODO coalesce in filtering to improve performance ?
         /* Since the statistics are computed on a weekly basis, only the measurements made at the end of the weeks are preserved */
         JavaRDD<ItalianDailyStats> italianWeeklyStats = italianDailyStats.filter(ids -> ids.getDayOfWeek() == 7);
         /* Available data are cumulative but the required statistics are absolute. Then statistics computation is

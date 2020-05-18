@@ -116,7 +116,7 @@ public class Query3 {
     /*
     * Given a trend coefficient value and a vector of centroids, identify the index of the centroid at minimum distance
     * */
-    public static Tuple2<Integer, RegionData> assignRegionToCluster(Tuple2<Double,RegionData> trendRegion, Double[] centroids) {
+    private static Tuple2<Integer, RegionData> assignRegionToCluster(Tuple2<Double,RegionData> trendRegion, Double[] centroids) {
         int minDistanceCentroid = 0;
         double minDistance = Double.MAX_VALUE;
         for (int i = 0; i < centroids.length; i++) {
@@ -135,7 +135,7 @@ public class Query3 {
     /*
     * Given a list of trend coefficient values belonging to the same cluster, computes the centroid of the cluster
     * */
-    public static Double computeClusterCentroid(Iterable<RegionData> clusterPoints) {
+    private static Double computeClusterCentroid(Iterable<RegionData> clusterPoints) {
         double sum = 0.0;
         int count = 0;
         for (RegionData rd : clusterPoints) {
@@ -145,7 +145,7 @@ public class Query3 {
         return  sum / count;
     }
 
-    public static Double computeEuclideanDistance(Double[] a1, Double[] a2) {
+    private static Double computeEuclideanDistance(Double[] a1, Double[] a2) {
       double sum = 0.0;
       for (int i = 0; i < a1.length; i++) {
           sum += (a1[i]-a2[i])*(a1[i]-a2[i]);
@@ -153,7 +153,7 @@ public class Query3 {
       return Math.sqrt(sum);
     }
 
-    public static Double[] fromDoubleListToDoubleArray(List<Double> list) {
+    private static Double[] fromDoubleListToDoubleArray(List<Double> list) {
         Double[] array = new Double[list.size()];
         for (int i = 0; i < list.size(); i++) {
             array[i] = list.get(i);
@@ -169,7 +169,7 @@ public class Query3 {
     *   between the vector of new centroids and the vector of old centroids is lower than K_MEANS_ERROR_THRESHOLD
     * - Euclidean distance is used
     * */
-    public static void kMeansNaive(JavaPairRDD<Double,RegionData> trendRegionPairs, String outputDirectory) {
+    private static void kMeansNaive(JavaPairRDD<Double,RegionData> trendRegionPairs, String outputDirectory) {
 
         List<Double> trendCoefficients = trendRegionPairs.map(x -> x._1).distinct().collect();
         double[] trendCoefficientsArray = new double[trendCoefficients.size()];
