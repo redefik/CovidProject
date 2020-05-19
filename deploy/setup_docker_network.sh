@@ -7,6 +7,10 @@
 # - a PgAdmin instance used to create a Postgres database storing the results
 # - a Grafana instance used to graphically visualize query results
 
+mkdir nifi_data
+mkdir postgres_data
+mkdir grafana_data
+
 docker network create ingestion_serving_network
 
 # Nifi setup

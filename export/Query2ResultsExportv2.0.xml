@@ -2,16 +2,16 @@
 <template encoding-version="1.3">
     <description></description>
     <groupId>bbc2f1ad-0171-1000-18a4-5e634f5a3048</groupId>
-    <name>Query1ResultsExport</name>
+    <name>Query2ResultsExportv2.0</name>
     <snippet>
         <connections>
-            <id>1354c6fa-4c6a-311c-0000-000000000000</id>
+            <id>80bd1944-843e-39de-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <destination>
                 <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
-                <id>c827909e-e548-35e8-0000-000000000000</id>
+                <id>03f48338-9f7d-3e33-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </destination>
             <flowFileExpiration>0 sec</flowFileExpiration>
@@ -24,19 +24,19 @@
             <selectedRelationships>success</selectedRelationships>
             <source>
                 <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
-                <id>f61aedaa-eca9-3aa8-0000-000000000000</id>
+                <id>4b77237d-752f-326c-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </source>
             <zIndex>0</zIndex>
         </connections>
         <connections>
-            <id>6b0f3ee6-4c12-3bb6-0000-000000000000</id>
+            <id>e480843f-61cf-3c20-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
             <backPressureObjectThreshold>10000</backPressureObjectThreshold>
             <destination>
                 <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
-                <id>f61aedaa-eca9-3aa8-0000-000000000000</id>
+                <id>ea4f8e82-bfa3-347d-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </destination>
             <flowFileExpiration>0 sec</flowFileExpiration>
@@ -49,13 +49,171 @@
             <selectedRelationships>success</selectedRelationships>
             <source>
                 <groupId>eca5db2a-5794-348a-0000-000000000000</groupId>
-                <id>a8559702-f55b-33e2-0000-000000000000</id>
+                <id>03f48338-9f7d-3e33-0000-000000000000</id>
                 <type>PROCESSOR</type>
             </source>
             <zIndex>0</zIndex>
         </connections>
         <controllerServices>
-            <id>6f140835-9bab-3b45-0000-000000000000</id>
+            <id>0228f326-43df-3200-0000-000000000000</id>
+            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
+            <bundle>
+                <artifact>nifi-dbcp-service-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <comments></comments>
+            <descriptors>
+                <entry>
+                    <key>Database Connection URL</key>
+                    <value>
+                        <name>Database Connection URL</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Database Driver Class Name</key>
+                    <value>
+                        <name>Database Driver Class Name</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>database-driver-locations</key>
+                    <value>
+                        <name>database-driver-locations</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>kerberos-credentials-service</key>
+                    <value>
+                        <identifiesControllerService>org.apache.nifi.kerberos.KerberosCredentialsService</identifiesControllerService>
+                        <name>kerberos-credentials-service</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Database User</key>
+                    <value>
+                        <name>Database User</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Password</key>
+                    <value>
+                        <name>Password</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Max Wait Time</key>
+                    <value>
+                        <name>Max Wait Time</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Max Total Connections</key>
+                    <value>
+                        <name>Max Total Connections</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Validation-query</key>
+                    <value>
+                        <name>Validation-query</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-min-idle-conns</key>
+                    <value>
+                        <name>dbcp-min-idle-conns</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-max-idle-conns</key>
+                    <value>
+                        <name>dbcp-max-idle-conns</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-max-conn-lifetime</key>
+                    <value>
+                        <name>dbcp-max-conn-lifetime</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-time-between-eviction-runs</key>
+                    <value>
+                        <name>dbcp-time-between-eviction-runs</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-min-evictable-idle-time</key>
+                    <value>
+                        <name>dbcp-min-evictable-idle-time</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>dbcp-soft-min-evictable-idle-time</key>
+                    <value>
+                        <name>dbcp-soft-min-evictable-idle-time</name>
+                    </value>
+                </entry>
+            </descriptors>
+            <name>DBCPConnectionPool</name>
+            <persistsState>false</persistsState>
+            <properties>
+                <entry>
+                    <key>Database Connection URL</key>
+                    <value>jdbc:postgresql://my_postgres:5432/covid_db</value>
+                </entry>
+                <entry>
+                    <key>Database Driver Class Name</key>
+                    <value>org.postgresql.Driver</value>
+                </entry>
+                <entry>
+                    <key>database-driver-locations</key>
+                    <value>/data/postgresql-42.2.12.jar</value>
+                </entry>
+                <entry>
+                    <key>kerberos-credentials-service</key>
+                </entry>
+                <entry>
+                    <key>Database User</key>
+                    <value>postgres</value>
+                </entry>
+                <entry>
+                    <key>Password</key>
+                </entry>
+                <entry>
+                    <key>Max Wait Time</key>
+                </entry>
+                <entry>
+                    <key>Max Total Connections</key>
+                </entry>
+                <entry>
+                    <key>Validation-query</key>
+                </entry>
+                <entry>
+                    <key>dbcp-min-idle-conns</key>
+                </entry>
+                <entry>
+                    <key>dbcp-max-idle-conns</key>
+                </entry>
+                <entry>
+                    <key>dbcp-max-conn-lifetime</key>
+                </entry>
+                <entry>
+                    <key>dbcp-time-between-eviction-runs</key>
+                </entry>
+                <entry>
+                    <key>dbcp-min-evictable-idle-time</key>
+                </entry>
+                <entry>
+                    <key>dbcp-soft-min-evictable-idle-time</key>
+                </entry>
+            </properties>
+            <state>DISABLED</state>
+            <type>org.apache.nifi.dbcp.DBCPConnectionPool</type>
+        </controllerServices>
+        <controllerServices>
+            <id>67576361-73a2-3b1b-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <bundle>
                 <artifact>nifi-record-serialization-services-nar</artifact>
@@ -253,169 +411,129 @@
                     <key>csvutils-character-set</key>
                 </entry>
             </properties>
-            <state>ENABLED</state>
+            <state>DISABLED</state>
             <type>org.apache.nifi.csv.CSVReader</type>
         </controllerServices>
-        <controllerServices>
-            <id>e2e5f8ce-0a49-3314-0000-000000000000</id>
+        <processors>
+            <id>03f48338-9f7d-3e33-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>352.0</y>
+            </position>
             <bundle>
-                <artifact>nifi-dbcp-service-nar</artifact>
+                <artifact>nifi-standard-nar</artifact>
                 <group>org.apache.nifi</group>
                 <version>1.11.4</version>
             </bundle>
-            <comments></comments>
-            <descriptors>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>Regular Expression</key>
+                        <value>
+                            <name>Regular Expression</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Replacement Value</key>
+                        <value>
+                            <name>Replacement Value</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Character Set</key>
+                        <value>
+                            <name>Character Set</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Maximum Buffer Size</key>
+                        <value>
+                            <name>Maximum Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Replacement Strategy</key>
+                        <value>
+                            <name>Replacement Strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>Regular Expression</key>
+                        <value>^(.*)(\n)(.*)</value>
+                    </entry>
+                    <entry>
+                        <key>Replacement Value</key>
+                        <value>continent,week,avg_confirmed,max_confirmed,min_confirmed,stdev_confirmed
+$1$2$3</value>
+                    </entry>
+                    <entry>
+                        <key>Character Set</key>
+                        <value>UTF-8</value>
+                    </entry>
+                    <entry>
+                        <key>Maximum Buffer Size</key>
+                        <value>1 MB</value>
+                    </entry>
+                    <entry>
+                        <key>Replacement Strategy</key>
+                        <value>Regex Replace</value>
+                    </entry>
+                    <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>AddHeaderToCSVFiles</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>STOPPED</state>
+            <style>
                 <entry>
-                    <key>Database Connection URL</key>
-                    <value>
-                        <name>Database Connection URL</name>
-                    </value>
+                    <key>background-color</key>
+                    <value>#0cc925</value>
                 </entry>
-                <entry>
-                    <key>Database Driver Class Name</key>
-                    <value>
-                        <name>Database Driver Class Name</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>database-driver-locations</key>
-                    <value>
-                        <name>database-driver-locations</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>kerberos-credentials-service</key>
-                    <value>
-                        <identifiesControllerService>org.apache.nifi.kerberos.KerberosCredentialsService</identifiesControllerService>
-                        <name>kerberos-credentials-service</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>Database User</key>
-                    <value>
-                        <name>Database User</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>Password</key>
-                    <value>
-                        <name>Password</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>Max Wait Time</key>
-                    <value>
-                        <name>Max Wait Time</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>Max Total Connections</key>
-                    <value>
-                        <name>Max Total Connections</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>Validation-query</key>
-                    <value>
-                        <name>Validation-query</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-min-idle-conns</key>
-                    <value>
-                        <name>dbcp-min-idle-conns</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-max-idle-conns</key>
-                    <value>
-                        <name>dbcp-max-idle-conns</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-max-conn-lifetime</key>
-                    <value>
-                        <name>dbcp-max-conn-lifetime</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-time-between-eviction-runs</key>
-                    <value>
-                        <name>dbcp-time-between-eviction-runs</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-min-evictable-idle-time</key>
-                    <value>
-                        <name>dbcp-min-evictable-idle-time</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>dbcp-soft-min-evictable-idle-time</key>
-                    <value>
-                        <name>dbcp-soft-min-evictable-idle-time</name>
-                    </value>
-                </entry>
-            </descriptors>
-            <name>DBCPConnectionPool</name>
-            <persistsState>false</persistsState>
-            <properties>
-                <entry>
-                    <key>Database Connection URL</key>
-                    <value>jdbc:postgresql://localhost:5432/FromNifi</value>
-                </entry>
-                <entry>
-                    <key>Database Driver Class Name</key>
-                    <value>org.postgresql.Driver</value>
-                </entry>
-                <entry>
-                    <key>database-driver-locations</key>
-                    <value>/home/federico/postgresql-42.2.12.jar</value>
-                </entry>
-                <entry>
-                    <key>kerberos-credentials-service</key>
-                </entry>
-                <entry>
-                    <key>Database User</key>
-                    <value>postgres</value>
-                </entry>
-                <entry>
-                    <key>Password</key>
-                </entry>
-                <entry>
-                    <key>Max Wait Time</key>
-                </entry>
-                <entry>
-                    <key>Max Total Connections</key>
-                </entry>
-                <entry>
-                    <key>Validation-query</key>
-                </entry>
-                <entry>
-                    <key>dbcp-min-idle-conns</key>
-                </entry>
-                <entry>
-                    <key>dbcp-max-idle-conns</key>
-                </entry>
-                <entry>
-                    <key>dbcp-max-conn-lifetime</key>
-                </entry>
-                <entry>
-                    <key>dbcp-time-between-eviction-runs</key>
-                </entry>
-                <entry>
-                    <key>dbcp-min-evictable-idle-time</key>
-                </entry>
-                <entry>
-                    <key>dbcp-soft-min-evictable-idle-time</key>
-                </entry>
-            </properties>
-            <state>ENABLED</state>
-            <type>org.apache.nifi.dbcp.DBCPConnectionPool</type>
-        </controllerServices>
+            </style>
+            <type>org.apache.nifi.processors.standard.ReplaceText</type>
+        </processors>
         <processors>
-            <id>a8559702-f55b-33e2-0000-000000000000</id>
+            <id>4b77237d-752f-326c-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <position>
                 <x>8.0</x>
@@ -547,7 +665,7 @@
                 <properties>
                     <entry>
                         <key>Hadoop Configuration Resources</key>
-                        <value>/home/federico/hadoop_conf/pseudod/hdfs-site.xml,/home/federico/hadoop_conf/pseudod/core-site.xml</value>
+                        <value>/data/hdfs-site.xml,/data/core-site.xml</value>
                     </entry>
                     <entry>
                         <key>kerberos-credentials-service</key>
@@ -567,7 +685,7 @@
                     </entry>
                     <entry>
                         <key>Directory</key>
-                        <value>/covidProject/nationalData/output</value>
+                        <value>/user/nifi/covid_project/global_data/output2</value>
                     </entry>
                     <entry>
                         <key>Recurse Subdirectories</key>
@@ -618,7 +736,7 @@
                 <yieldDuration>1 sec</yieldDuration>
             </config>
             <executionNodeRestricted>false</executionNodeRestricted>
-            <name>GetQuery1ResultFromHDFS</name>
+            <name>GetQuery2ResultFromHDFS</name>
             <relationships>
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
@@ -627,13 +745,13 @@
             <style>
                 <entry>
                     <key>background-color</key>
-                    <value>#0099ff</value>
+                    <value>#0cc925</value>
                 </entry>
             </style>
             <type>org.apache.nifi.processors.hadoop.GetHDFS</type>
         </processors>
         <processors>
-            <id>c827909e-e548-35e8-0000-000000000000</id>
+            <id>ea4f8e82-bfa3-347d-0000-000000000000</id>
             <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
             <position>
                 <x>664.0</x>
@@ -766,7 +884,7 @@
                 <properties>
                     <entry>
                         <key>put-db-record-record-reader</key>
-                        <value>6f140835-9bab-3b45-0000-000000000000</value>
+                        <value>67576361-73a2-3b1b-0000-000000000000</value>
                     </entry>
                     <entry>
                         <key>put-db-record-statement-type</key>
@@ -774,7 +892,7 @@
                     </entry>
                     <entry>
                         <key>put-db-record-dcbp-service</key>
-                        <value>e2e5f8ce-0a49-3314-0000-000000000000</value>
+                        <value>0228f326-43df-3200-0000-000000000000</value>
                     </entry>
                     <entry>
                         <key>put-db-record-catalog-name</key>
@@ -785,7 +903,7 @@
                     </entry>
                     <entry>
                         <key>put-db-record-table-name</key>
-                        <value>italian_data</value>
+                        <value>continent_weekly_stats</value>
                     </entry>
                     <entry>
                         <key>put-db-record-translate-field-names</key>
@@ -857,129 +975,11 @@
             <style>
                 <entry>
                     <key>background-color</key>
-                    <value>#0099ff</value>
+                    <value>#0cc925</value>
                 </entry>
             </style>
             <type>org.apache.nifi.processors.standard.PutDatabaseRecord</type>
         </processors>
-        <processors>
-            <id>f61aedaa-eca9-3aa8-0000-000000000000</id>
-            <parentGroupId>eca5db2a-5794-348a-0000-000000000000</parentGroupId>
-            <position>
-                <x>0.0</x>
-                <y>352.0</y>
-            </position>
-            <bundle>
-                <artifact>nifi-standard-nar</artifact>
-                <group>org.apache.nifi</group>
-                <version>1.11.4</version>
-            </bundle>
-            <config>
-                <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
-                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
-                <descriptors>
-                    <entry>
-                        <key>Regular Expression</key>
-                        <value>
-                            <name>Regular Expression</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Replacement Value</key>
-                        <value>
-                            <name>Replacement Value</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Character Set</key>
-                        <value>
-                            <name>Character Set</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Maximum Buffer Size</key>
-                        <value>
-                            <name>Maximum Buffer Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Replacement Strategy</key>
-                        <value>
-                            <name>Replacement Strategy</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
-                </descriptors>
-                <executionNode>ALL</executionNode>
-                <lossTolerant>false</lossTolerant>
-                <penaltyDuration>30 sec</penaltyDuration>
-                <properties>
-                    <entry>
-                        <key>Regular Expression</key>
-                        <value>^(.*)(\n)(.*)</value>
-                    </entry>
-                    <entry>
-                        <key>Replacement Value</key>
-                        <value>week,avg_cured,avg_swabs
-$1$2$3</value>
-                    </entry>
-                    <entry>
-                        <key>Character Set</key>
-                        <value>UTF-8</value>
-                    </entry>
-                    <entry>
-                        <key>Maximum Buffer Size</key>
-                        <value>1 MB</value>
-                    </entry>
-                    <entry>
-                        <key>Replacement Strategy</key>
-                        <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
-                    </entry>
-                </properties>
-                <runDurationMillis>0</runDurationMillis>
-                <schedulingPeriod>0 sec</schedulingPeriod>
-                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-                <yieldDuration>1 sec</yieldDuration>
-            </config>
-            <executionNodeRestricted>false</executionNodeRestricted>
-            <name>AddHeaderToCSVFiles</name>
-            <relationships>
-                <autoTerminate>true</autoTerminate>
-                <name>failure</name>
-            </relationships>
-            <relationships>
-                <autoTerminate>false</autoTerminate>
-                <name>success</name>
-            </relationships>
-            <state>STOPPED</state>
-            <style>
-                <entry>
-                    <key>background-color</key>
-                    <value>#0099ff</value>
-                </entry>
-            </style>
-            <type>org.apache.nifi.processors.standard.ReplaceText</type>
-        </processors>
     </snippet>
-    <timestamp>05/13/2020 15:19:21 CEST</timestamp>
+    <timestamp>05/19/2020 09:25:54 CEST</timestamp>
 </template>
