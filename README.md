@@ -17,7 +17,7 @@ The query answered are the following:
 
 The datasets were processed on Apache Spark using an EMR cluster. The input files were imported into EMR HDFS through
 Apache Nifi. The same tool was used to export query results from HDFS and put them into a Postgres database. Then 
-a Grafana instance was connected to Postgres to visually display the results. Grafana, Nifi and Postgres was deployed
+a Grafana instance was connected to Postgres to visually display the results. Grafana, Nifi and Postgres were deployed
 on an EC2 instance inside a Docker network.
 
 #### Deployment Guide
